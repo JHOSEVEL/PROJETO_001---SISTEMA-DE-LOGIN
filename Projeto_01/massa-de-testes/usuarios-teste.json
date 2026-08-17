@@ -1,0 +1,104 @@
+{
+  "test_suite": "Login Functionality",
+  "test_cases": [
+    {
+      "id": "CTN-LOGIN-01",
+      "description": "Validar autenticação com credenciais válidas",
+      "payload": {
+        "email": "usuario.valido@exemplo.com",
+        "password": "Senha@123Valid"
+      },
+      "expected_result": {
+        "status_code": 200,
+        "success": true,
+        "message": "Login realizado com sucesso",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      }
+    },
+    {
+      "id": "CTN-LOGIN-02",
+      "description": "Validar bloqueio de acesso com senha incorreta",
+      "payload": {
+        "email": "usuario.valido@exemplo.com",
+        "password": "SenhaIncorreta123"
+      },
+      "expected_result": {
+        "status_code": 401,
+        "success": false,
+        "error_code": "INVALID_CREDENTIALS",
+        "message": "E-mail ou senha inválidos"
+      }
+    },
+    {
+      "id": "CTN-LOGIN-03",
+      "description": "Validar tentativa de login com e-mail não cadastrado",
+      "payload": {
+        "email": "nao.cadastrado@exemplo.com",
+        "password": "SenhaAnyPassword123"
+      },
+      "expected_result": {
+        "status_code": 401,
+        "success": false,
+        "error_code": "USER_NOT_FOUND",
+        "message": "E-mail ou senha inválidos"
+      }
+    },
+    {
+      "id": "CTN-LOGIN-04",
+      "description": "Validar comportamento do sistema com campos obrigatórios vazios",
+      "payload": {
+        "email": "",
+        "password": ""
+      },
+      "expected_result": {
+        "status_code": 400,
+        "success": false,
+        "error_code": "REQUIRED_FIELDS_MISSING",
+        "validation_errors": [
+          {
+            "field": "email",
+            "message": "O campo e-mail é obrigatório."
+          },
+          {
+            "field": "password",
+            "message": "O campo senha é obrigatório."
+          }
+        ]
+      }
+    },
+    {
+      "id": "CTN-LOGIN-05",
+      "description": "Validar comportamento do sistema com formato de e-mail inválido",
+      "payload": {
+        "email": "usuario.invalido.com",
+        "password": "Senha@123Valid"
+      },
+      "expected_result": {
+        "status_code": 400,
+        "success": false,
+        "error_code": "INVALID_EMAIL_FORMAT",
+        "validation_errors": [
+          {
+            "field": "email",
+            "message": "Informe um endereço de e-mail válido."
+          }
+        ]
+      }
+    },
+    {
+      "id": "CTN-LOGIN-06",
+      "description": "Validar regra de negócio após múltiplas tentativas incorretas",
+      "payload": {
+        "email": "usuario.bloqueado@exemplo.com",
+        "password": "SenhaIncorreta123",
+        "failed_attempts_count": 5
+      },
+      "expected_result": {
+        "status_code": 429,
+        "success": false,
+        "error_code": "ACCOUNT_LOCKED",
+        "message": "Sua conta foi temporariamente bloqueada devido a múltiplas tentativas incorretas. Tente novamente em 15 minutos."
+      }
+    }
+  ]
+}
